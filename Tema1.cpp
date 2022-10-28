@@ -23,12 +23,12 @@ public:
     Carte& operator = (Carte const &book); ///Operator de atribuiere !CARTE&!
     friend bool  operator == (Carte const &book, Carte const &book2);///Operator de egalitate
     friend bool operator !=(Carte const &book, Carte const &book2);///Operator de diferenta
-    friend istream& operator >> (istream& is, Carte  &book);///Citire ? Cum il fac sa mearga pt un vector de membrii
+    friend istream& operator >> (istream& is, Carte  &book);///Citire
     friend ostream& operator<< (ostream& os,  Carte const &book);///Afisare
     ~Carte();///Destructor
 
 };
-///Libraria are o cel putin o carte! si cartea nu este o libararie
+
 class Librarie{
     Carte *colectie;
     int nr;
@@ -130,7 +130,7 @@ int main(){
         cout<<"Elementul nr "<<i+1<<endl;
         cin>>*lista[i];
     }
-    //lista[1] = lista[0]; ///!!!! FARA POINTER
+    //lista[1] = lista[0]; 
     for(int i = 0; i < n; i++){
        cout<<*lista[i];
     }
