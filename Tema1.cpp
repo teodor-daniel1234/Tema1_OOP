@@ -1,9 +1,7 @@
 #include <iostream>
 #include <cstring>
 using namespace std;
-///https://oop.octav.cc/tema1/
 /// Clasa Librarie: permite adăgarea a mai multor cărți prin operatorul +=
-///căutarea unei cărți după titlu / autor
 class Carte {
 private:
     char *Titlu;
@@ -14,9 +12,9 @@ public:
     Carte();///Default Constructor
     Carte(const Carte &book1); ///Copy Constructor
     void SetTitlu(const char *titlu_); ///SETTER
-    char *GetTitlu();///GETTER
+    char *GetTitlu()const;///GETTER
     void SetAutor(const char *autor_);
-    char *GetAutor();
+    char *GetAutor()const;
     void SetAnaparitie( int an);
     int GetAnaparitie()const;
     void Citire();
@@ -26,11 +24,9 @@ public:
     friend istream& operator >> (istream& is, Carte  &book);///Citire
     friend ostream& operator<< (ostream& os,  Carte const &book);///Afisare
     ~Carte();///Destructor
-
 };
-///Libraria are o cel putin o carte! si cartea nu este o libararie
 class Librarie{
-    int nr;
+    int nr;///Pentru a stii cate elemente sunt in vector
     Carte **listaCarte = new Carte*[100];
 public:
     Librarie(int nr_,Carte *listaCarte_[]){
@@ -42,27 +38,17 @@ public:
     int GetNr(){
         return nr;
     }
+    void SetNr(int nr_){
+        nr = nr_;
+    }
     void Afisare_lista(){
         for(int i = 0; i < nr; i++){
-            cout<<*listaCarte[i]; ///mergelol
+            cout<<*listaCarte[i];
         }
     }
-    void Cautare(){
-        char *buff = new char[100]; ///merge lol?
-        cout<<"Cautare carte sau dupa titlu, introduceti una din ele:"<<endl;
-        cin>>buff;
-        cout<<buff<<endl;
-        for(int i = 0; i < nr; i++){
-            if(strcmp(listaCarte[i]->GetAutor(),buff) == 0){
-                cout<<"Este autorul cartii ["<<i<< "]"<<endl;
-            }
-            if(strcmp(listaCarte[i]->GetTitlu(), buff) == 0){
-                cout<<"Este titlul cartii ["<<i<<"]"<<endl;
-            }
-
-        }
-
-    }
+    void Cautare();
+    friend bool  operator +=(const Librarie& lib1, const Carte& book);
+    ~Librarie();
 };
 
 Carte::Carte(const char *titlu_, const char *autor_, const int an_aparitie) {
@@ -73,8 +59,10 @@ Carte::Carte(const char *titlu_, const char *autor_, const int an_aparitie) {
     An_aparitie = an_aparitie;
 }
 Carte::Carte(const Carte &book1) {
-    Titlu = book1.Titlu;
-    Autor = book1.Autor;
+    this->Titlu = new char[strlen(book1.Titlu)+1];
+    strcpy(this->Titlu,book1.Titlu);
+    this->Autor = new char[strlen(book1.Autor)+1];
+    strcpy(this->Autor,book1.Autor);
     An_aparitie = book1.An_aparitie;
 }
 Carte::Carte() {
@@ -85,19 +73,18 @@ Carte::Carte() {
     strcpy(this->Autor,buff);
     An_aparitie = 0;
 }
-
 void Carte::SetTitlu(const char *titlu_) {
     this ->Titlu = new char[strlen(titlu_)+1];
     strcpy(this->Titlu,titlu_);
 }
-char *Carte::GetTitlu() {
+char *Carte::GetTitlu()const{
     return Titlu;
 }
 void Carte::SetAutor(const char* autor_){
     Autor = new char[strlen(autor_)+1];
     strcpy(this->Autor,autor_);
 }
-char *Carte::GetAutor() {
+char *Carte::GetAutor()const{
     return Autor;
 }
 void Carte::SetAnaparitie(const int an) {
@@ -106,7 +93,6 @@ void Carte::SetAnaparitie(const int an) {
 int Carte::GetAnaparitie() const{
     return An_aparitie;
 }
-
 Carte& Carte::operator = (const Carte& book) {
     if(this != &book){
         SetTitlu(book.Titlu);
@@ -121,11 +107,13 @@ bool operator ==(const Carte& book , const Carte& book2){
 bool operator !=( const Carte& book, const Carte& book2){
     return (book.Autor != book2.Autor || book.Titlu != book2.Titlu || book.An_aparitie != book2.An_aparitie);
 }
+bool operator +=(const Librarie& lib1, const Carte& book){
+    ///WIP
+}
 ostream& operator <<(ostream& os, const Carte &book){
     os<<book.Autor<<' '<<book.Titlu<<' '<<book.An_aparitie<<endl;
     return os;
 }
-
 istream& operator >>(istream& is, Carte& book){
     cout<<"Citire Autor"<<endl;
     char buff[255];
@@ -143,38 +131,139 @@ Carte::~Carte() {
     delete [] Titlu;
     delete [] Autor;
 }
-int main(){
 
-    int n;
-    cout<<"Cate elemente vrei: ";
-    cin>>n;
-    Carte **lista = new Carte * [n];
-    for(int i = 0; i < n; i++) {
-        lista[i] = new Carte("Default", "Default", 2);
+void Librarie::Cautare() {
+        char *buff = new char[100];
+        cout<<"Cautare carte sau dupa titlu, introduceti una din ele:"<<endl;
+        cin>>buff;
+        cout<<buff<<endl;
+        for(int i = 0; i < nr; i++){
+            if(strcmp(listaCarte[i]->GetAutor(),buff) == 0){
+                cout<<"Este autorul cartii ["<<i<< "]"<<endl;
+            }
+            if(strcmp(listaCarte[i]->GetTitlu(), buff) == 0){
+                cout<<"Este titlul cartii ["<<i<<"]"<<endl;
+            }
+            if(i == nr - 1){
+                cout<<"Nu exista acest autor/titlu"<<endl;
+            }
+        }
+}
+Librarie::~Librarie() {
+    for(int i = 0; i < nr; i++){
+        delete listaCarte[i];
     }
-
-    for(int i = 0; i < n; i++){
-        cout<<"Elementul nr "<<i+1<<endl;
-        cin>>*lista[i];
+    delete listaCarte;
+    cout<<"S-a sters cu succes"<<endl;
+}
+int main() {
+    int cnt = 99;
+while(1) {
+    cout << endl;
+    system("Color 0A");
+    cout << "Pentru a initializa doua carti si a testa functiile de initializare/citire/copiere/atribuire/==/!= apasa 1"<< endl;
+    cout << "Pentru a se realiza citirea si afisarea a n carti (un vector de carti)" << endl;
+    cout << "Pentru a initializa o libararie apasa 3 " << endl;
+    cout << "Pentru a iesi introduceti 100" << endl;
+    cout << endl << "Alegerea:";
+    cin >> cnt;
+    switch (cnt) {
+        case 1: {
+            int func = 0;
+            Carte book("Capra cu trei iezi", "Ion Creanga", 1837);
+            cout << "Cartea nr 1: " << book;
+            Carte book2("Moby Dick", "Herman Melville", 1851);
+            cout << "Cartea nr 2:" << book2;
+            cout<< "Pentru a Reciti Titlul, Autorul si Anul in prima carte apasati [1] sau pentru a doua carte apasati [2] "<< endl;
+            cout << "Pentru a Copia continutul din Cartea 1 in Cartea 3 apasati [3]" <<endl;
+            cout << "Pentru a a Atribui elmentele din Cartea2 in Cartea1 apasati [4] "<<endl;
+            cin >> func;
+            if (func == 1) {
+                cin >> book;
+                cout << "Cartea nr 1: " << book << endl;
+                break;
+            }
+            if (func == 2) {
+                cin >> book2;
+                cout << "Cartea nr 2: " << book2 << endl;
+                break;
+            }
+            if (func == 3) {
+                Carte book3(book);
+                cout << "Cartea 3 :" << book3;
+            }
+            if (func == 4) {
+                book = book2;
+                cout << "Cartea 1 :" << book;
+            }
+            cout << "Pentru a vedea daca Cartea 1 si Cartea 2 sunt la fel apasati [5]" << endl;
+            cin >> func;
+            if (func == 5) {
+                if (book == book2) {
+                    cout << "Cartile sunt la fel" << endl;
+                } else {
+                    cout << "Cartile nu sunt la fel" << endl;
+                }
+            }
+        }
+        case 2:{
+            int n;
+            cout<<"Nr de elemente ale listei de carti: ";
+            cin>>n;
+            Carte **lista = new Carte *[n];
+            for(int i = 0 ;i < n ; ++i){
+                lista[i] = new Carte("Default","Default",0);
+            }
+            for (int i = 0; i < n; i++) {
+                cout << "Cartea nr [" << i + 1 <<"]"<<endl;
+                cin >> *lista[i];
+            }
+            for(int i = 0; i < n; i++){
+                cout << "Cartea nr [" << i + 1 <<"] ";
+                cout<<*lista[i];
+            }
+            //Stergere din memorie
+            for(int i = 0; i < n; i++){
+                delete lista[i];
+            }
+            delete lista;
+        }
+        case 3:{
+            int n;
+            cout<<"Numarul de carti din libarie"<<endl;
+            cin>>n;
+            Carte **lista = new Carte *[n];
+            for(int i = 0 ;i < n ; ++i){
+                lista[i] = new Carte("Default","Default",0);
+            }
+            for (int i = 0; i < n; i++) {
+                cout << "Cartea nr [" << i + 1 <<"]"<<endl;
+                cin >> *lista[i];
+            }
+            for(int i = 0; i < n; i++){
+                cout << "Cartea nr [" << i + 1 <<"] ";
+                cout<<*lista[i];
+            }
+            Librarie lib1(n,lista);
+            int func = 0;
+            cout<<"Daca doriti sa vedeti toate elementele din librarie apasati [1]: "<<endl;
+            cout<<"Daca doriti sa cautati un element specific apasati [2]: "<<endl;
+            cin>>func;
+            if(func == 1) {
+                lib1.Afisare_lista();
+            }
+            if(func == 2) {
+                lib1.Cautare();
+            }
+            
+            ///Adaugare prin +=
+            for(int i = 0; i < n; i++){
+                delete lista[i];
+            }
+            delete lista;
+        }
+        case 100: {
+            return 0;
+        }
     }
-    //lista[1] = lista[0]; ///!!!! FARA POINTER
-    /*
-    for(int i = 0; i < n; i++){
-       cout<<*lista[i];
-    }
-    Carte a("Default","Default",2);
-    Carte b("A","B",3);
-    a = *lista[0];
-    cout<<a;
-    ///Dealocarea memoriei
-    for(int i = 0; i < n; i++){
-        delete lista[i];
-    }
-    delete lista;
-*/
-///
-Librarie lib1(n,lista);// nr de elemente + lista respectiva
-lib1.Afisare_lista();
-lib1.Cautare();
-    return 0;
 }
