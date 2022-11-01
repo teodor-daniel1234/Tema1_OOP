@@ -48,7 +48,7 @@ public:
     }
     void Cautare();
     Librarie &operator+=(const Librarie &lib1){
-        ///De intrebat de ce nu ar merge
+        ///De intrebat
             unsigned int Nr_Carti = nr + lib1.nr;
             listaCarte = (Carte**) realloc(listaCarte, Nr_Carti * sizeof(Carte));
             int j = 0;
@@ -172,9 +172,10 @@ Librarie::~Librarie() {
 }
 int main() {
     int cnt;
+    while(1){
     //system("Color 0A");
     cout<< "Pentru a initializa doua carti si a testa functiile de initializare/citire/copiere/atribuire/==/!= apasa [1]"<< endl;
-    cout << "Pentru a se realiza citirea si afisarea a n carti (un vector de carti) [2]" << endl;
+    cout << "Pentru a se realiza citirea si afisarea a n carti [2]" << endl;
     cout << "Pentru a initializa o libararie apasa [3] " << endl;
     cout << "Pentru a iesi introduceti [100]" << endl;
     cout << endl << "Alegerea:";
@@ -186,7 +187,9 @@ int main() {
             cout << "Cartea nr 1: " << book;
             Carte book2("Moby Dick", "Herman Melville", 1851);
             cout << "Cartea nr 2:" << book2;
-            cout<< "Pentru a Reciti Titlul, Autorul si Anul in prima carte apasati [1] sau pentru a doua carte apasati [2] "<< endl;
+            cout
+                    << "Pentru a Reciti Titlul, Autorul si Anul in prima carte apasati [1] sau pentru a doua carte apasati [2] "
+                    << endl;
             cout << "Pentru a Copia continutul din Cartea 1 in Cartea 3 apasati [3]" << endl;
             cout << "Pentru a Atribui elmentele din Cartea2 in Cartea1 apasati [4] " << endl;
             cin >> func;
@@ -215,8 +218,8 @@ int main() {
                     cout << "Cartile nu sunt la fel" << endl;
                 }
             }
-            if(func == 6){
-                return  0;
+            if (func == 6) {
+                return 0;
             }
         }
         case 2: {
@@ -243,6 +246,7 @@ int main() {
             break;
         }
         case 3: {
+
             int n;
             cout << "Numarul de carti din libarie" << endl;
             cin >> n;
@@ -262,17 +266,19 @@ int main() {
             int func = 0;
             cout << "Daca doriti sa vedeti toate elementele din librarie apasati [1]: " << endl;
             cout << "Daca doriti sa cautati un element specific apasati [2]: " << endl;
-            cout<<"Daca doriti sa mai adaugati un element += [3]"<<endl;
+            cout << "Daca doriti sa mai adaugati un element += [3]" << endl;
             cin >> func;
             if (func == 1) {
                 lib1.Afisare_lista();
+                break;
             }
             if (func == 2) {
                 lib1.Cautare();
+                break;
             }
-            if(func == 3){
+            if (func == 3) {
                 ///Adaugare prin +=
-                Librarie lib2(n,lista);
+                Librarie lib2(n, lista);
                 lib2.Afisare_lista();
                 lib1 += lib2;
                 lib1.Afisare_lista();
@@ -281,11 +287,14 @@ int main() {
                 delete lista[i];
             }
             delete[] lista;
-            break;
-        }
-        default: {
+            break;}
+
+        case 100: {
             break;
         }
     }
+    break;
+    }
+    fflush(stdin);
     return 0;
 }
