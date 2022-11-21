@@ -18,7 +18,7 @@ public:
     void SetAnaparitie( int an);
     int GetAnaparitie()const;
     void Citire();
-    Carte& operator = (Carte const &book); ///Operator de atribuiere !CARTE&!
+    Carte& operator = (Carte const &book); ///Operator de atribuiere 
     friend bool  operator == (Carte const &book, Carte const &book2);///Operator de egalitate
     friend bool operator !=(Carte const &book, Carte const &book2);///Operator de diferenta
     friend istream& operator >> (istream& is, Carte  &book);///Citire
